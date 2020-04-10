@@ -21,6 +21,9 @@ jobs:
         - base=https://github.com/docker/machine/releases/download/v0.16.2 &&
           curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine &&
           sudo install /tmp/docker-machine /usr/local/bin/docker-machine
+        - curl -L -OJ https://github.com/cloudscale-ch/docker-machine-driver-cloudscale/releases/download/v1.2.0/docker-machine-driver-cloudscale_v1.2.0_linux_amd64.tar.gz
+        - tar xzvf docker-machine-driver-cloudscale*
+        - sudo install docker-machine-driver-cloudscale /usr/local/bin/docker-machine-driver-cloudscale
 
       before_script:
         - rancher login --skip-verify -t $RANCHER_TOKEN https://185.79.233.18/v3
