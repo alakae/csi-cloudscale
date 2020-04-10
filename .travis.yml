@@ -10,3 +10,9 @@ jobs:
     - stage: unit
       script:
         - make test
+    - stage: integration
+      install:
+        - curl -L -OJ https://github.com/rancher/cli/releases/download/v2.4.0/rancher-linux-amd64-v2.4.0.tar.gz
+        - tar xvzf rancher-*
+        - sudo install ./rancher-*/rancher /usr/local/bin/rancher
+        - rancher help
