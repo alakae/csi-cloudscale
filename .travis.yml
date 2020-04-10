@@ -2,6 +2,9 @@ language: go
 go:
   - stable
 
+services:
+  - docker
+
 env:
   - GO111MODULE=on
 
@@ -15,13 +18,18 @@ jobs:
         - curl -L -OJ https://github.com/rancher/cli/releases/download/v2.4.0/rancher-linux-amd64-v2.4.0.tar.gz
         - tar xvzf rancher-*
         - sudo install ./rancher-*/rancher /usr/local/bin/rancher
+        - base=https://github.com/docker/machine/releases/download/v0.16.2 &&
+          curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine &&
+          sudo install /tmp/docker-machine /usr/local/bin/docker-machine
 
       before_script:
         - rancher login --skip-verify -t $RANCHER_TOKEN https://185.79.233.18/v3
         - rancher clusters create integration
+        - docker-machine create --driver cloudscale k8s
 
       script:
         - echo hello
 
       after_script:
         - rancher cluster rm integration
+        - docker-machine rm -f k8s
