@@ -15,4 +15,13 @@ jobs:
         - curl -L -OJ https://github.com/rancher/cli/releases/download/v2.4.0/rancher-linux-amd64-v2.4.0.tar.gz
         - tar xvzf rancher-*
         - sudo install ./rancher-*/rancher /usr/local/bin/rancher
-        - rancher help
+
+      before_script:
+        - rancher login --skip-verify -t $RANCHER_TOKEN https://185.79.233.18/v3
+        - rancher clusters create integration
+
+      script:
+        - echo hello
+
+      after_script:
+        - rancher cluster rm integration
