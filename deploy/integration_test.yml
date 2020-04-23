@@ -2,8 +2,11 @@
 - hosts: localhost
   tags: [install-csi]
   vars:
-    ssh_key_files: "{{ lookup('fileglob', '~/.ssh/id*.pub', wantlist=True) }}"
-    ssh_keys: "{{ [lookup('file', ssh_key_files[0])] }}"
+    ssh_key_files: "{{ lookup('fileglob', '~/.ssh/*.pub', wantlist=True) }}"
+    ssh_keys: |
+      {% for fn in ssh_key_files %}
+      {{ lookup('file', fn) }}
+      {% endfor %}
     base_server_name: 'test-kubernetes-'
     servers:
       - "master"
@@ -13,7 +16,7 @@
 
   tasks:
     - debug:
-        msg: "Starting servers with keys found in ~/.ssh/id*.pub': {{ ssh_keys }}"
+        msg: "Starting servers with keys found in ~/.ssh/*.pub': {{ ssh_keys }}"
 
     - name: Start the cloudscale.ch servers
       cloudscale_server:

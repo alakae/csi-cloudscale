@@ -2,8 +2,31 @@ language: go
 go:
   - stable
 
-env:
-  - GO111MODULE=on
-
 script:
   - make test
+
+jobs:
+  include:
+    - stage: test
+    - &integration
+      stage: Integration Test
+      before_install:
+        - ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519
+        - cd deploy
+        - sudo apt-get -y install python3-pip python3-setuptools
+      install:
+        - pip3 install wheel
+        - pip3 install -r kubespray/requirements.txt
+      before_script:
+        - ansible-playbook integration_test.yml -i inventory/hosts.ini -e version=$VERSION -e kube_version=$KUBE_VERSION --skip-tags test --skip-tags cleanup
+      script:
+        - ansible-playbook integration_test.yml -i inventory/hosts.ini -e version=$VERSION -e kube_version=$KUBE_VERSION --tags test -vvv
+
+      env:
+        - VERSION=v1.1.0 KUBE_VERSION=v1.16.8
+#    - <<: *integration
+#      env:
+#        - VERSION=v1.0.1 KUBE_VERSION=v1.15.11
+#    - <<: *integration
+#      env:
+#        - VERSION=v1.0.1 KUBE_VERSION=v1.16.8
