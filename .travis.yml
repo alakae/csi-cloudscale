@@ -11,6 +11,8 @@ jobs:
     - &integration
       stage: Integration Test
       before_install:
+        - export RAND=$(tr -dc 'a-z0-9' < /dev/urandom | fold -w 8 | head -n 1)
+        - echo $RAND
         - ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519
         - cd deploy
         - sudo apt-get -y install python3-pip python3-setuptools
@@ -18,15 +20,17 @@ jobs:
         - pip3 install wheel
         - pip3 install -r kubespray/requirements.txt
       before_script:
-        - ansible-playbook integration_test.yml -i inventory/hosts.ini -e version=$VERSION -e kube_version=$KUBE_VERSION --skip-tags test --skip-tags cleanup
+        - ansible-playbook integration_test.yml -i inventory/hosts.ini -e version=$VERSION -e kube_version=$KUBE_VERSION -e image_slug=$IMAGE_SLUG --skip-tags test --skip-tags cleanup
       script:
-        - ansible-playbook integration_test.yml -i inventory/hosts.ini -e version=$VERSION -e kube_version=$KUBE_VERSION --tags test -vvv
+        - ansible-playbook integration_test.yml -i inventory/hosts.ini -e version=$VERSION -e kube_version=$KUBE_VERSION -e image_slug=$IMAGE_SLUG --tags test -vvv
 
       env:
-        - VERSION=v1.1.0 KUBE_VERSION=v1.16.8
-#    - <<: *integration
-#      env:
-#        - VERSION=v1.0.1 KUBE_VERSION=v1.15.11
-#    - <<: *integration
-#      env:
-#        - VERSION=v1.0.1 KUBE_VERSION=v1.16.8
+        - VERSION=v1.1.2 KUBE_VERSION=v1.17.7
+
+    - <<: *integration
+      env:
+        - VERSION=v1.1.2 KUBE_VERSION=v1.17.7 IMAGE_SLUG=flatcar-2512.2
+
+    - <<: *integration
+      env:
+        - VERSION=v1.0.1 KUBE_VERSION=v1.13.0 IMAGE_SLUG=centos-7

@@ -7,7 +7,8 @@
       {% for fn in ssh_key_files %}
       {{ lookup('file', fn) }}
       {% endfor %}
-    base_server_name: 'test-kubernetes-'
+    base_server_name: "test-{{ lookup('env','RAND') }}-kubernetes-"
+    image_slug: "{{ lookup('env', 'image_slug')|default('centos-8', true) }}"
     servers:
       - "master"
       - "node1"
@@ -22,7 +23,7 @@
       cloudscale_server:
         name: "{{ base_server_name }}{{ item }}"
         flavor: flex-4
-        image: centos-7
+        image: '{{image_slug}}'
         ssh_keys: '{{ ssh_keys }}'
         api_token: '{{ cloudscale_api_token }}'
       loop: "{{ servers }}"
@@ -115,7 +116,7 @@
 - hosts: localhost
   tags: [cleanup]
   vars:
-    base_server_name: 'test-kubernetes-'
+    base_server_name: "test-{{ lookup('env','RAND') }}-kubernetes-"
     servers:
       - "master"
       - "node1"
