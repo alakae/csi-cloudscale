@@ -27,10 +27,6 @@ jobs:
       env:
         - VERSION=v1.1.2 KUBE_VERSION=v1.17.7 IMAGE_SLUG=centos-8
 
-#    - <<: *integration
-#      env:
-#        - VERSION=v1.1.2 KUBE_VERSION=v1.17.7 IMAGE_SLUG=flatcar-2512.2
-
     - <<: *integration
       env:
         - VERSION=v1.0.1 KUBE_VERSION=v1.16.0 IMAGE_SLUG=centos-7

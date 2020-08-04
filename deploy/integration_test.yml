@@ -61,6 +61,8 @@
         name: cryptsetup
 
 - name: Include the play that installs kubernetes
+  vars:
+    docker_dns_servers_strict: false # required on centos-8
   tags: [install-kubernetes]
   import_playbook: kubespray/cluster.yml
 
