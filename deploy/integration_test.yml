@@ -114,6 +114,14 @@
     - name: "Run the tests"
       # The idiomatic way to bypass test caching is to use -count=1.
       shell: "KUBECONFIG=$(pwd)/kubeconfig.yml go test -count=1 -v -tags integration -timeout 20m ../test/..."
+      async: 1000
+      poll: 0
+      register: test_sleeper
+    - name: 'Wait for tests'
+      async_status: jid={{ test_sleeper.ansible_job_id }}
+      register: job_result
+      until: job_result.finished
+      retries: 3000
 
 - hosts: localhost
   tags: [cleanup]
