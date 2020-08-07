@@ -12,7 +12,7 @@ jobs:
       stage: Integration Test
       before_install:
         - export LATEST_VERSION=$(cat VERSION)
-        - VERSION=${VERSION:=$LATEST_VERSION}
+        - export VERSION=${VERSION:=$LATEST_VERSION}
 
         - export RAND=$(tr -dc 'a-z0-9' < /dev/urandom | fold -w 8 | head -n 1)
         - echo $RAND
@@ -27,7 +27,7 @@ jobs:
       before_script:
         - ansible-playbook integration_test.yml -i inventory/hosts.ini -e version=$VERSION -e kube_version=$KUBE_VERSION -e image_slug=$IMAGE_SLUG --skip-tags test --skip-tags cleanup
       script:
-        - ansible-playbook integration_test.yml -i inventory/hosts.ini -e version=$VERSION -e kube_version=$KUBE_VERSION -e image_slug=$IMAGE_SLUG --tags test
+        - ansible-playbook integration_test.yml -i inventory/hosts.ini -e version=$VERSION -e kube_version=$KUBE_VERSION -e image_slug=$IMAGE_SLUG --tags test  -vvv
 
       env:
         - KUBE_VERSION=v1.17.7 IMAGE_SLUG=centos-8
