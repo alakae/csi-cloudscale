@@ -11,3 +11,4 @@ dependencies:
   - name: common
     version: 1.17.1
     repository: https://charts.bitnami.com/bitnami
+
