@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feat/add-helm-chart
 
 jobs:
   release:
